@@ -9,6 +9,7 @@ RULES = {
     "ai-trailer": ("error", "Commit trailer credits an AI tool (Co-authored-by, Assisted-by, AI-*)"),
     "ai-identity": ("error", "Author, committer, or an email in a file is an AI tool's bot identity"),
     "ai-footer": ("error", "Attribution line such as 'Generated with ...' or 'Author: ChatGPT'"),
+    "ai-generic": ("warning", "Attribution line naming no tool, only 'an AI' or 'a language model'"),
     "ai-tag": ("error", "AI tag such as [AI], (AI-generated), or '(via Claude)'"),
     "ai-emoji": ("error", "Robot emoji in a commit message or pull request"),
     "ai-session-link": ("error", "Link to an AI chat or agent session"),

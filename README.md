@@ -29,6 +29,7 @@ to your own config until a release catches up.
 | `ai-trailer` | error | commits, PR body | `Co-authored-by: Claude <noreply@anthropic.com>`, `Assisted-by: ...`, `AI-Assisted: yes` |
 | `ai-identity` | error | commit author and committer, emails in files | `Copilot <...+Copilot@users.noreply.github.com>`, `Jane (aider)`, `cursoragent@cursor.com` |
 | `ai-footer` | error | commits, PR title and body, files | `Generated with [Claude Code](...)`, `;;; Written by ChatGPT`, `@author Copilot`, `<meta name="generator" content="ChatGPT">` |
+| `ai-generic` | warning | commits, PR title and body, files | `Written with the help of an AI assistant`: credit that names no tool |
 | `ai-tag` | error | commits, PR title and body | `[AI]`, `(AI-generated)`, `(via Claude)` |
 | `ai-emoji` | error | commits, PR title and body | the robot emoji (U+1F916) |
 | `ai-session-link` | error | commits, PR text, files | `claude.ai/code/...`, `chatgpt.com/share/...` |

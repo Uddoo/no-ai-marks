@@ -12,7 +12,8 @@
 #   kind             "product" (the default); "vendor" for a company name,
 #                    which isn't matched in short tags like "(via X)" because
 #                    projects that call its API write that; or "generic" for
-#                    words like "an AI", matched only in attribution phrases.
+#                    words like "an AI", matched only in attribution phrases
+#                    and reported as ai-generic, a warning.
 #   names            Names as written. Case is ignored, and words may be
 #                    separated by spaces or a hyphen ("Claude Code" also
 #                    matches "claude-code").
