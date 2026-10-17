@@ -124,6 +124,10 @@ jobs:
 
 ### Locally
 
+The command line is on PyPI: `pipx install no-ai-marks`, or run it once
+with `uvx no-ai-marks`. In a CI system other than GitHub Actions,
+`pip install no-ai-marks` and run `no-ai-marks range BASE`.
+
 With [pre-commit](https://pre-commit.com):
 
 ```yaml

@@ -11,6 +11,10 @@ license = "MIT"
 license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 requires-python = ">=3.11"
 
+[project.urls]
+Homepage = "https://github.com/mishan/no-ai-marks"
+Issues = "https://github.com/mishan/no-ai-marks/issues"
+
 [project.scripts]
 no-ai-marks = "no_ai_marks.__main__:main"
 
