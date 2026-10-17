@@ -70,7 +70,10 @@ class Scanner:
         name = m.groupdict().get("name")
         tool = self.registry.tool_for_name(name, "phrases") if name else None
         message = _credited(f"credits an AI tool: '{chars.visible(found)}'", tool)
-        self.add("ai-footer", message, where, column=column, line_text=line)
+        # "Made with an AI tool's help" names nothing to take out, and reads
+        # like ordinary prose often enough to warn rather than fail.
+        generic = any(t.id == tool and t.kind == "generic" for t in self.registry.tools)
+        self.add("ai-generic" if generic else "ai-footer", message, where, column=column, line_text=line)
 
     # Commit messages, pull request text, branch names.
 
