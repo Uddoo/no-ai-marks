@@ -1,5 +1,19 @@
 # Contributing
 
+Contributions are welcome: new tools and rules, false positives and misses,
+docs, and fixes, from people and from AI agents and the people working
+with them alike. Open an issue or a pull request.
+
+This repository runs its own check on every pull request: CI's
+`no-ai-marks` job runs the action from the pull request's code. So leave
+out the attribution your tools add by default (`Co-authored-by` trailers
+naming an AI, "Generated with" footers, the robot emoji, session links,
+`claude/`-style branch names). If the check fails, reword the commit,
+rename the branch, or edit the description, which runs it again. If it
+fails on something that isn't attribution, that's a false positive worth
+reporting: add the case to [tests/corpus/](tests/corpus/) with your fix,
+or open an issue.
+
 ## Adding or updating an AI tool
 
 Most changes are data, not code. Every AI tool is an entry in
