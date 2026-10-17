@@ -92,3 +92,28 @@ built-in one.
 ```sh
 python3 -m unittest discover -s tests
 ```
+
+## Releasing
+
+1. Set the version in `pyproject.toml`, `__version__` in
+   `no_ai_marks/__init__.py`, and the README's pre-commit `rev`. Merge
+   that to main.
+2. Tag it and push the tag. `release.yml` runs the tests, checks the tag
+   is the version, and publishes to PyPI.
+
+   ```sh
+   git tag vX.Y.Z && git push origin vX.Y.Z
+   ```
+
+3. Add the release on GitHub, and move `v0` to it, for the Action's users:
+
+   ```sh
+   gh release create vX.Y.Z --verify-tag --title vX.Y.Z --notes-file NOTES.md
+   git tag -f v0 vX.Y.Z && git push -f origin v0
+   ```
+
+Once, before the first release: in the repository's settings, create an
+environment named `pypi` (a required reviewer on it makes each publish
+wait for a click); and on PyPI, add a pending trusted publisher for
+`no-ai-marks`: owner `mishan`, repository `no-ai-marks`, workflow
+`release.yml`, environment `pypi`.
