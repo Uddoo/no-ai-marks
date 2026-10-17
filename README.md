@@ -4,6 +4,17 @@ A CI check that fails when commits, pull requests, branch names, or changed
 files carry AI attribution or hidden watermarks. It's meant for projects whose
 contribution policy doesn't allow them.
 
+It isn't an anti-AI tool, and it doesn't block contributions that AI tools
+helped write. It doesn't judge how a change came to be, only what it
+carries: the trailers, footers, links, and hidden characters that tools add
+on their own, which clutter a project's history and can hide text. A change
+written with an assistant's help passes once those are left out, the same as
+any other.
+
+If you're an agent working in a repository that runs this check, it isn't
+there to turn you away. Leave out the attribution your tool adds by
+default, and it passes.
+
 It doesn't try to guess whether code *looks* machine-written. It only looks
 for explicit markers: trailers, footers, bot identities, session links, branch
 prefixes, invisible Unicode, look-alike letters, and AI provenance metadata in
