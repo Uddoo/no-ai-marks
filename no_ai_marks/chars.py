@@ -45,6 +45,7 @@ _NON_JOINING_ARABIC = frozenset({
 _NUMBER_SPACES = frozenset({0x00A0, 0x2007, 0x2009, 0x202F})
 
 _BIDI_MARKS = frozenset({0x061C, 0x200E, 0x200F})
+_ZWSP = 0x200B
 _ZWNJ = 0x200C
 _ZWJ = 0x200D
 _BOM = 0xFEFF
@@ -166,6 +167,15 @@ def _joiner_ok(cps: list[int], i: int) -> bool:
     )
 
 
+def _mention_escape(cps: list[int], i: int) -> bool:
+    """A ZWSP between "@" and a username, which is how Dependabot quotes
+    release notes without notifying the people they mention. A letter or
+    digit before the "@" makes it an email address, not a mention."""
+    def name_char(k: int) -> bool:
+        return 0 <= k < len(cps) and cps[k] < 0x80 and chr(cps[k]).isalnum()
+    return i > 0 and cps[i - 1] == 0x40 and name_char(i + 1) and not name_char(i - 2)
+
+
 def _balanced_isolates(cps: list[int]) -> bool:
     depth = 0
     for cp in cps:
@@ -202,9 +212,10 @@ def _flag_ok(cps: list[int], start: int, end: int) -> bool:
     )
 
 
-def scan(text: str, *, at_file_start: bool = False, allowed: frozenset = frozenset()) -> Iterator[tuple[str, int, int]]:
+def scan(text: str, *, at_file_start: bool = False, allowed: frozenset = frozenset(), mentions: bool = False) -> Iterator[tuple[str, int, int]]:
     """Yield (rule, column, code point) for suspicious characters in one
-    line. Columns are 1-based code point offsets."""
+    line. Columns are 1-based code point offsets. With `mentions`, a ZWSP
+    escaping an @mention passes."""
     cps = [ord(c) for c in text]
     n = len(cps)
     rtl = None
@@ -244,6 +255,8 @@ def scan(text: str, *, at_file_start: bool = False, allowed: frozenset = frozens
             i = j
             continue
         if cp == _BOM and i == 0 and at_file_start:
+            pass
+        elif cp == _ZWSP and mentions and _mention_escape(cps, i):
             pass
         elif cp in (_ZWJ, _ZWNJ):
             if not _joiner_ok(cps, i):
