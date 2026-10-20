@@ -64,6 +64,9 @@ It tries hard not to flag legitimate text:
   Mongolian variation selectors after Mongolian letters. Subdivision flags,
   a leading BOM, form feeds (Lisp page breaks), and no-break spaces inside
   numbers ("12 000", "10 %") are fine too.
+- In commit messages and pull request text, a zero-width space between `@`
+  and a username passes: Dependabot quotes release notes that way so the
+  people they mention aren't notified. In files it's still flagged.
 - Only lines *added* by the change are checked by default, so existing files
   don't block unrelated pull requests.
 

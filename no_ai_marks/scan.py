@@ -113,7 +113,9 @@ class Scanner:
             m = self.registry.session_links.search(line)
             if m:
                 self.add("ai-session-link", f"links to an AI session: {m.group(0)}", where, column=m.start() + 1, line_text=line)
-            self._chars(line, where)
+            # Messages and PR text are Markdown, where escaped mentions are
+            # routine; in files a ZWSP after "@" can still break a string.
+            self._chars(line, where, mentions=True)
 
     def _trailer(self, line: str, where: dict) -> bool:
         m = patterns.TRAILER.match(line)
@@ -198,9 +200,9 @@ class Scanner:
             self.add("ai-metadata", "IPTC digital source type marks it as AI-generated", where, column=m.start() + 1, line_text=line)
         self._chars(line, where, at_file_start=number == 1)
 
-    def _chars(self, text: str, where: dict, *, at_file_start: bool = False) -> None:
+    def _chars(self, text: str, where: dict, *, at_file_start: bool = False, mentions: bool = False) -> None:
         hits = defaultdict(list)
-        for rule, column, cp in chars.scan(text, at_file_start=at_file_start, allowed=self.config.allowed_chars):
+        for rule, column, cp in chars.scan(text, at_file_start=at_file_start, allowed=self.config.allowed_chars, mentions=mentions):
             hits[rule].append((column, cp))
         for rule, found in hits.items():
             names = list(dict.fromkeys(chars.describe(cp) for _, cp in found))
