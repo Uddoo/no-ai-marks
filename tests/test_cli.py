@@ -96,6 +96,39 @@ class HookTest(RepoTestCase):
         self.assertIn("commit message, line 3: error: 'Co-Authored-By' trailer credits Claude", out)
 
 
+@unittest.skipIf(os.name == "nt", "Windows filenames cannot contain newlines")
+class NewlinePathTest(RepoTestCase):
+    def setUp(self):
+        super().setUp()
+        self.path = "a\nnotes.md"
+        self.repo.write(self.path, "hidden\u200btext\n")
+        self.repo.write("z.md", "more\u200btext\n")
+
+    def assert_files(self, code, found):
+        self.assertEqual(code, 1)
+        self.assertEqual(
+            sorted((f["rule"], f["path"], f["line"]) for f in found),
+            [("invisible-char", self.path, 1), ("invisible-char", "z.md", 1)],
+        )
+
+    def test_range_reads_newline_path_and_following_blob(self):
+        self.repo.commit("Add notes")
+        self.assert_files(*self.findings("range", self.base))
+
+    def test_staged_reads_newline_path_and_following_blob(self):
+        self.repo.git("add", "-A")
+        self.assert_files(*self.findings("staged"))
+
+    def test_whole_tree_reads_newline_path_and_following_blob(self):
+        self.repo.commit("Add notes")
+        self.repo.write("event.json", "{}")
+        env = {
+            "GITHUB_EVENT_NAME": "workflow_dispatch",
+            "GITHUB_EVENT_PATH": os.path.join(self.repo.path, "event.json"),
+        }
+        self.assert_files(*self.findings("ci", "--scope", "all", env=env))
+
+
 class CiTest(RepoTestCase):
     def event(self, name, payload):
         fd, path = tempfile.mkstemp(suffix=".json")

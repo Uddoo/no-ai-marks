@@ -169,7 +169,7 @@ class Blobs:
 
     def __enter__(self) -> "Blobs":
         self._proc = subprocess.Popen(
-            ["git", "cat-file", "--batch"], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            ["git", "cat-file", "--batch", "-z"], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         )
         return self
 
@@ -180,7 +180,7 @@ class Blobs:
 
     def read(self, spec: str) -> bytes | None:
         """Read "<rev>:<path>" (or ":<path>" for the index)."""
-        self._proc.stdin.write(spec.encode("utf-8", "surrogateescape") + b"\n")
+        self._proc.stdin.write(spec.encode("utf-8", "surrogateescape") + b"\0")
         self._proc.stdin.flush()
         header = self._proc.stdout.readline().split()
         if len(header) != 3:
