@@ -4,10 +4,12 @@ import os
 import sys
 import tempfile
 import unittest
+from contextlib import chdir
 
 from helpers import Repo
 
 from no_ai_marks.__main__ import _use_utf8
+from no_ai_marks.git import Blobs
 
 TRAILER = "Co-Authored-By: Claude <noreply@anthropic.com>"
 
@@ -127,6 +129,18 @@ class NewlinePathTest(RepoTestCase):
             "GITHUB_EVENT_PATH": os.path.join(self.repo.path, "event.json"),
         }
         self.assert_files(*self.findings("ci", "--scope", "all", env=env))
+
+
+class BlobReadTest(RepoTestCase):
+    def test_missing_newline_path_keeps_following_blob_aligned(self):
+        content = b"ordinary file\n"
+        self.repo.write("z.md", content)
+        self.repo.commit("Add notes")
+        for spec in ("HEAD:missing\nnotes.md", ":missing\nnotes.md"):
+            with self.subTest(spec=spec), chdir(self.repo.path), Blobs() as blobs:
+                self.assertEqual(blobs.read("HEAD:README.md"), b"# Demo\n")
+                self.assertIsNone(blobs.read(spec))
+                self.assertEqual(blobs.read("HEAD:z.md"), content)
 
 
 class CiTest(RepoTestCase):
